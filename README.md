@@ -32,9 +32,10 @@ Este ejercicio forma parte del módulo **Desarrollo de Interfaces** del ciclo fo
 
 ## Cómo clonar este repositorio
 
-1º Crear el directorio en el que se va a descargar/clonar el proyecto.
-2º Situados dentro del directorio ejecutar desde el cmd o powershell el comando siguiente:
+1. Crear el directorio en el que se va a descargar/clonar el proyecto.
+
+2. Situados dentro del directorio ejecutar desde el cmd o powershell el comando siguiente:
 ```bash
 git clone https://github.com/ManuelArroyoSalcedo/PracticoExtraordinaria.git
-
-3º Abrir el proyecto con NetBeans.
+```
+3. Abrir el proyecto con NetBeans.
