@@ -1,0 +1,631 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package com.tierno.extraordinaria;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import javax.help.HelpBroker;
+import javax.help.HelpSet;
+import javax.help.HelpSetException;
+import javax.help.JHelp;
+import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
+
+
+/**
+ *
+ * @author Manuel Arroyo Salcedo
+ */
+public class MiPrincipal extends javax.swing.JFrame {
+
+    private ArrayList<Integer> codcateg = new ArrayList<>();
+    private ArrayList<Integer> codfab = new ArrayList<>();
+    private ArrayList<Integer> codpais = new ArrayList<>();
+    private Connection conexion = null;
+    
+    DefaultTableModel modelo = null;
+    
+    public MiPrincipal() {
+        initComponents();
+        
+        try {
+            Class.forName("org.hsqldb.jdbcDriver");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MiPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        cargarTablaInicio();
+
+        categorias();
+        fabricantes();
+        paises();
+        
+        
+    }
+    
+    /**
+     * Este método se encarga de cargar datos en la tabla. 
+     * Este método se ejecuta al iniciar la aplicación y al pulsar el botón de Reiniciar.
+     */
+    private void cargarTablaInicio(){
+        try {
+            //Cargar datos en la tabla
+            conexion = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost", "SA", "SA");
+            
+            String sqlcount = "SELECT COUNT(*) FROM productos p JOIN categorias c ON p.codcateg = c.codigo JOIN fabricantes f ON p.codfab = f.codigo JOIN paises pa ON f.codpais = pa.codigo";
+
+            Statement stmt = conexion.createStatement();
+            ResultSet rs = stmt.executeQuery(sqlcount);
+            rs.next();
+            int nreg = rs.getInt(1);
+            
+            String sql =  "SELECT \n" +
+                          "    p.nombre AS producto,\n" +
+                          "    c.nombre AS categoria,\n" +
+                          "    f.nombre AS fabricante,\n" +
+                          "    pa.nombre AS pais_fabricante, \n" +
+                          "     p.preciouni, p.unidexist, p.unidaviso " +
+                          "FROM productos p\n" +
+                          "JOIN categorias c ON p.codcateg = c.codigo\n" +
+                          "JOIN fabricantes f ON p.codfab = f.codigo\n" +
+                          "JOIN paises pa ON f.codpais = pa.codigo\n" + 
+                          " ORDER BY p.nombre";
+            System.out.println(sql);
+            stmt = conexion.createStatement();
+            rs = stmt.executeQuery(sql);
+
+            String[] columnas = {"PRODUCTO", "CATEGORÍA", "FABRICANTE", "PAÍS", "PRECIO UNI.", "STOCK", "AVISO"};
+            Object[][] datos = new Object[nreg][columnas.length];
+            
+            // Procesar los resultados
+            int fila = 0;
+            while (rs.next()) {
+                datos[fila][0] = rs.getString("nombre");
+                datos[fila][1] = rs.getString("categoria");
+                datos[fila][2] = rs.getString("fabricante");
+                datos[fila][3] = rs.getString("pais_fabricante");
+                datos[fila][4] = rs.getInt("preciouni");
+                datos[fila][5] = rs.getInt("unidexist");
+                datos[fila][6] = rs.getInt("unidaviso");                
+                fila++;
+            }
+            
+            modelo = new DefaultTableModel(datos, columnas);
+            tabla.setModel(modelo);
+            
+            if(modelo.getRowCount()>0){
+               bt1.setEnabled(true);
+               bt2.setEnabled(true);
+               bt3.setEnabled(true);
+            }else{
+               bt1.setEnabled(false);
+               bt2.setEnabled(false);
+               bt3.setEnabled(false);
+            }
+            
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(MiPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }    
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tabla = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
+        categorias = new javax.swing.JComboBox<>();
+        paises = new javax.swing.JComboBox<>();
+        fabricantes = new javax.swing.JComboBox<>();
+        buscar = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        bt1 = new javax.swing.JButton();
+        bt2 = new javax.swing.JButton();
+        bt3 = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        salir = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        productos = new javax.swing.JMenuItem();
+        clientes = new javax.swing.JMenuItem();
+        fabri = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        mostrarayuda = new javax.swing.JMenuItem();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Principal");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
+
+        jPanel1.setBackground(new java.awt.Color(153, 204, 255));
+
+        tabla.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tabla);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 920, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel2.setBackground(new java.awt.Color(0, 204, 204));
+
+        categorias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "\"Todas las categorías\"" }));
+        categorias.setBorder(javax.swing.BorderFactory.createTitledBorder("Categorías"));
+
+        paises.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "\"Todos los países\"" }));
+        paises.setBorder(javax.swing.BorderFactory.createTitledBorder("Países"));
+
+        fabricantes.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "\"Todos los fabricantes\"" }));
+        fabricantes.setBorder(javax.swing.BorderFactory.createTitledBorder("Fabricantes"));
+
+        buscar.setText("Buscar datos");
+        buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Reiniciar búsqueda");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(categorias, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(fabricantes, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(paises, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(buscar, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(categorias, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(paises, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fabricantes, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(32, 32, 32))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(17, 17, 17)
+                .addComponent(buscar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(12, Short.MAX_VALUE))
+        );
+
+        jPanel3.setBackground(new java.awt.Color(0, 153, 153));
+
+        bt1.setText("Generar informe sencillo");
+        bt1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt1ActionPerformed(evt);
+            }
+        });
+
+        bt2.setText("Generar informe con imagen");
+        bt2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt2ActionPerformed(evt);
+            }
+        });
+
+        bt3.setText("Generar informe con gráfico");
+        bt3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt3ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(bt1, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(bt2, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(bt3, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bt1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bt2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bt3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(26, Short.MAX_VALUE))
+        );
+
+        jMenu1.setText("Archivo");
+
+        salir.setText("Salir");
+        salir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salirActionPerformed(evt);
+            }
+        });
+        jMenu1.add(salir);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Gestión");
+
+        productos.setText("Productos");
+        jMenu2.add(productos);
+
+        clientes.setText("Clientes");
+        jMenu2.add(clientes);
+
+        fabri.setText("Fabricantes");
+        jMenu2.add(fabri);
+
+        jMenuBar1.add(jMenu2);
+
+        jMenu3.setText("Ayuda");
+
+        mostrarayuda.setText("Mostrar ayuda");
+        jMenu3.add(mostrarayuda);
+
+        jMenuBar1.add(jMenu3);
+
+        setJMenuBar(jMenuBar1);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(102, 102, 102))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(20, 20, 20))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void bt1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt1ActionPerformed
+        
+    }//GEN-LAST:event_bt1ActionPerformed
+
+ 
+    /**
+     * Carga en el ComboBox de categorías las categorías.
+     */
+    private void categorias(){
+       cargaDatos("SELECT * FROM categorias ORDER BY nombre",codcateg, categorias);
+    }
+    
+    /**
+     * Carga en el ComboBox de fabricantes los fabricantes que han fabricado productos.
+     * */
+    private void fabricantes(){
+       cargaDatos("SELECT DISTINCT f.codigo, f.nombre FROM fabricantes f JOIN productos p ON f.codigo = p.codfab ORDER BY f.nombre",
+               codfab, fabricantes);
+    }
+
+    /**
+     * Carga en el ComboBox de paises los paisese de fabricantes que han fabricado productos
+     */
+    private void paises(){
+       cargaDatos("SELECT DISTINCT  pa.codigo, pa.nombre FROM paises pa JOIN fabricantes f ON pa.codigo = f.codpais JOIN productos p ON f.codigo = p.codfab ORDER BY pa.nombre",
+                   codpais, paises);
+    }
+    
+    /**
+     * Utilizada por los métodos categorias(), fabricantes() y paises() para buscar y cargar los datos en el ComboBox correspondiente.
+     * @param sql Sentencia SQL de búsqueda de datos.
+     * @param arrr ArrayList con los datos
+     * @param combo ComboBox al que se le van a cargar los datos.
+     */
+    private void cargaDatos(String sql, ArrayList<Integer> arrr, javax.swing.JComboBox<String> combo){
+        try {
+            
+            Statement stmt = conexion.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            // Procesar los resultados
+            while (rs.next()) {
+                arrr.add(rs.getInt("codigo"));
+                String cate = rs.getString("nombre");
+                combo.addItem(cate);
+            }
+
+            // Cerrar recursos
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(MiPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }     
+    }
+    
+   
+    /**
+     * Devuelve el código de la categoría seleccionada como un String.
+     * Si no se ha seleccionado nada, devuelve el String null.
+     * @return Código de la categoría.
+     */
+    private String dameCodCateg(){
+        String resul = "NULL";
+        if(categorias.getSelectedIndex()> 0) resul = String.valueOf(codcateg.get(categorias.getSelectedIndex() - 1));
+        return resul;
+    }
+
+
+    /**
+     * Devuelve el código del fabricante seleccionado como un String.
+     * Si no se ha seleccionado nada, devuelve null.
+     * @return Código del fabricante.
+     */
+    private String dameCodFab(){
+        String resul = "NULL";
+        if(fabricantes.getSelectedIndex()> 0) resul = String.valueOf(codfab.get(fabricantes.getSelectedIndex() - 1));
+        return resul;
+    }
+
+
+    /**
+     * Devuelve el código del pais seleccionado como un String.
+     * Si no se ha seleccionado nada, devuelve null.
+     * @return Código del país.
+     */
+    private String dameCodPais(){
+        String resul = "NULL";
+        if(paises.getSelectedIndex()> 0) resul = String.valueOf(codpais.get(paises.getSelectedIndex() - 1));
+        return resul;
+    }
+    
+    /**
+     * Cierra la aplicación
+     * @param evt 
+     */
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        try {
+            conexion.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(MiPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowClosed
+
+    
+    /**
+     * Buscar o filtrar.
+     * Busca los registros que cumplean la condición de los COmboBox.
+     * @param evt 
+     */
+    private void buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarActionPerformed
+
+        try {
+            //Cargar datos en la tabla
+            conexion = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost", "SA", "SA");
+            
+            String sqlcount = "SELECT COUNT(*) FROM productos p JOIN categorias c ON p.codcateg = c.codigo JOIN fabricantes f ON p.codfab = f.codigo JOIN paises pa ON f.codpais = pa.codigo"
+                    + " WHERE ("+dameCodCateg()+" IS NULL OR p.codcateg = "+dameCodCateg()+") AND ("+dameCodFab()+" IS NULL OR p.codfab = "+dameCodFab()+") AND ("+dameCodPais()+" IS NULL OR f.codpais = "+dameCodPais()+")";
+            Statement stmt = conexion.createStatement();
+            ResultSet rs = stmt.executeQuery(sqlcount);
+            rs.next();
+            int nreg = rs.getInt(1);
+            
+            String sql =  "SELECT \n" +
+                          "    p.nombre AS producto,\n" +
+                          "    c.nombre AS categoria,\n" +
+                          "    f.nombre AS fabricante,\n" +
+                          "    pa.nombre AS pais_fabricante, \n" +
+                          "     p.preciouni, p.unidexist, p.unidaviso " +
+                          "FROM productos p\n" +
+                          "JOIN categorias c ON p.codcateg = c.codigo\n" +
+                          "JOIN fabricantes f ON p.codfab = f.codigo\n" +
+                          "JOIN paises pa ON f.codpais = pa.codigo\n" 
+                        + " WHERE ("+dameCodCateg()+" IS NULL OR p.codcateg = "+dameCodCateg()+") AND ("+dameCodFab()+" IS NULL OR p.codfab = "+dameCodFab()+") AND ("+dameCodPais()+" IS NULL OR f.codpais = "+dameCodPais()+") "
+                         + " ORDER BY p.nombre";
+            
+            
+            stmt = conexion.createStatement();
+            rs = stmt.executeQuery(sql);
+
+            String[] columnas = {"PRODUCTO", "CATEGORÍA", "FABRICANTE", "PAÍS", "PRECIO UNI.", "STOCK", "AVISO"};
+            Object[][] datos = new Object[nreg][columnas.length];
+            
+            // Procesar los resultados
+            int fila = 0;
+            while (rs.next()) {
+                datos[fila][0] = rs.getString("nombre");
+                datos[fila][1] = rs.getString("categoria");
+                datos[fila][2] = rs.getString("fabricante");
+                datos[fila][3] = rs.getString("pais_fabricante");
+                datos[fila][4] = rs.getInt("preciouni");
+                datos[fila][5] = rs.getInt("unidexist");
+                datos[fila][6] = rs.getInt("unidaviso");
+                fila++;
+            }
+            
+            modelo = new DefaultTableModel(datos, columnas);
+            tabla.setModel(modelo);
+            
+            if(modelo.getRowCount()>0){
+               bt1.setEnabled(true);
+               bt2.setEnabled(true);
+               bt3.setEnabled(true);
+            }else{
+               bt1.setEnabled(false);
+               bt2.setEnabled(false);
+               bt3.setEnabled(false);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MiPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+
+        
+    }//GEN-LAST:event_buscarActionPerformed
+
+    private void salirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salirActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_salirActionPerformed
+
+    private void bt2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_bt2ActionPerformed
+
+    private void bt3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_bt3ActionPerformed
+
+    /**
+     * Reinicia el formulario.
+     * @param evt 
+     */
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        categorias.setSelectedIndex(0);
+        fabricantes.setSelectedIndex(0);
+        paises.setSelectedIndex(0);
+        
+        cargarTablaInicio();
+                
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+       /* try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(MiPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(MiPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(MiPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(MiPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }*/
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new MiPrincipal().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bt1;
+    private javax.swing.JButton bt2;
+    private javax.swing.JButton bt3;
+    private javax.swing.JButton buscar;
+    private javax.swing.JComboBox<String> categorias;
+    private javax.swing.JMenuItem clientes;
+    private javax.swing.JMenuItem fabri;
+    private javax.swing.JComboBox<String> fabricantes;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JMenuItem mostrarayuda;
+    private javax.swing.JComboBox<String> paises;
+    private javax.swing.JMenuItem productos;
+    private javax.swing.JMenuItem salir;
+    private javax.swing.JTable tabla;
+    // End of variables declaration//GEN-END:variables
+}

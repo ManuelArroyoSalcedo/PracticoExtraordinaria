@@ -1,0 +1,50 @@
+# =========================
+# NetBeans
+# =========================
+nbproject/private/
+build/
+nbbuild/
+dist/
+.nb-gradle/
+
+# =========================
+# Maven
+# =========================
+target/
+
+# =========================
+# Java compilación
+# =========================
+*.class
+
+# =========================
+# Archivos temporales y backups
+# =========================
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# =========================
+# Configuración de IDEs
+# =========================
+.idea/
+.vscode/
+*.iml
+
+# =========================
+# Sistema operativo
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+Icon?
+
+# =========================
+# Librerías externas (si las usas)
+# =========================
+/lib/
+/bibliotecas/

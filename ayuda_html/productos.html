@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Productos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #004080;
+        }
+        h2 {
+            color: #0066cc;
+        }
+        ul {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gestión de Productos</h1>
+    <p>La gestión de productos permite consultar, añadir, modificar y eliminar los productos disponibles en el sistema. Es una funcionalidad clave en la aplicación de gestión de pedidos.</p>
+
+    <h2>Información que se almacena por cada producto</h2>
+    <p>Para cada producto se registran los siguientes datos:</p>
+    <ul>
+        <li><strong>Nombre:</strong> Denominación del producto.</li>
+        <li><strong>Descripción:</strong> Detalles adicionales sobre sus características.</li>
+        <li><strong>Precio unitario:</strong> Precio por unidad del producto.</li>
+        <li><strong>Unidades en existencia:</strong> Cantidad actual disponible en el inventario.</li>
+        <li><strong>Unidades de aviso:</strong> Cantidad mínima para emitir una alerta de reposición.</li>
+        <li><strong>Suspendido:</strong> Indica si el producto está disponible para la venta o no.</li>
+    </ul>
+
+    <h2>Relaciones con otras entidades</h2>
+    <p>Los productos están vinculados con otras tablas del sistema, lo que permite organizar y clasificar la información eficientemente:</p>
+    <ul>
+        <li><strong>Fabricante:</strong> Cada producto está asociado a un fabricante registrado en el sistema.</li>
+        <li><strong>Proveedor:</strong> Cada producto tiene un proveedor principal vinculado.</li>
+        <li><strong>Categoría:</strong> Los productos se agrupan en categorías que ayudan a su clasificación.</li>
+        <li><strong>Provincia:</strong> Hace referencia a la ubicación geográfica vinculada al producto o proveedor.</li>
+    </ul>
+
+    <h2>Operaciones disponibles</h2>
+    <p>Desde la interfaz de gestión de productos se pueden realizar las siguientes operaciones:</p>
+    <ul>
+        <li><strong>Alta de productos:</strong> Permite registrar nuevos productos especificando todos sus datos.</li>
+        <li><strong>Modificación:</strong> Para actualizar la información de un producto existente.</li>
+        <li><strong>Eliminación:</strong> Se puede eliminar un producto si no tiene pedidos asociados.</li>
+        <li><strong>Consulta y búsqueda:</strong> Para visualizar el listado de productos y filtrar por nombre, categoría, fabricante o estado.</li>
+    </ul>
+
+    <h2>Notas adicionales</h2>
+    <p>Es importante mantener actualizada la información de los productos, especialmente las unidades en stock y los estados de suspensión, para garantizar una correcta gestión de los pedidos y evitar errores en la disponibilidad.</p>
+</body>
+</html>
+
